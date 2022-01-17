@@ -3,11 +3,14 @@
 #include "QRegularExpression"
 
 
-// Holds the current value of the calculation
+/*!
+ * \brief calValue
+ */
+/*Holds the current value of the calculation*/
 double calValue = 0.0;
 
 
-// This will be defined the last math button clicked
+ /*This will be defined the last math button clicked*/
 bool addTrigger = false;
 bool subtractionTrigger = false;
 bool divideTrigger = false;
@@ -17,39 +20,42 @@ bool squareTrigger = false;
 bool cubeTrigger = false;
 
 
-// Constructor
+ /*Constructor*/
 Calculator::Calculator(QWidget *parent) :
 
-    // The QMainWindow constructor is called
+     /*The QMainWindow constructor is called*/
     QMainWindow(parent),
 
-    // Created UI member is assigned UI class
+    /*Created UI member is assigned UI class*/
     ui(new Ui::Calculator)
 {
 
-    // Setup the UI
+     /*Setup the UI*/
     ui -> setupUi(this);
 
-    // Put 0.0 in Display
+     /*Put 0.0 in Display*/
     ui -> Display -> setText(QString::number(calValue));
 
-    // All the number buttons are assigned with references
+    // /*All the number buttons are assigned with references*/
     QPushButton *numberButtons[10];
 
-    // All the buutons are located by iterations
+     /*All the buutons are located by iterations*/
     for(int i = 0; i < 10; ++i)
     {
+        /*!
+         * \brief buttonName
+         */
         QString buttonName = "ButtonNo" + QString::number(i);
 
-        // Buttons are identified by name and added to the array
+         /*Buttons are identified by name and added to the array*/
         numberButtons[i] = Calculator::findChild<QPushButton *>(buttonName);
 
-        // NumberPressed() is called when the button is released.
+         /*NumberPressed() is called when the button is released.*/
         connect(numberButtons[i], SIGNAL(released()), this,
                 SLOT(NumberPressed()));
     }
 
-    // Signals and slots  are connected to the math buttons
+     /*Signals and slots  are connected to the math buttons*/
     connect(ui -> ButtonAdd, SIGNAL(released()), this,
             SLOT(MathButtonPressed()));
 
@@ -72,38 +78,50 @@ Calculator::Calculator(QWidget *parent) :
             SLOT(MathButtonPressed()));
 
 
-    // Connects the equal button
+     /*Connects the equal button*/
     connect(ui -> ButtonEquals, SIGNAL(released()), this,
             SLOT(EqualButtonPressed()));
 
-    // Connects the change sign button
+     /*Connects the change sign button*/
     connect(ui -> ButtonChangeSign, SIGNAL(released()), this,
             SLOT(ChangeNumberSign()));
 
-    // Connects the clear button
+     /*Connects the clear button*/
     connect(ui -> ButtonClear, SIGNAL(released()), this,
             SLOT(ClearButtonPressed()));
 }
 
 
-
+/*!
+ * \brief Calculator::~Calculator
+ */
 Calculator::~Calculator()
 {
     delete ui;
 }
 
 
-
+/*!
+ * \brief Calculator::NumberPressed
+ */
 void Calculator::NumberPressed()
 {
-
-    // The pointer is returned to the button that was pressed
+    /*!
+     * \brief button
+     */
+    /*The pointer is returned to the button that was pressed*/
     QPushButton *button = (QPushButton *)sender();
 
-    // Gets the number related to the button
+    /*!
+     * \brief butValue
+     */
+    /*Gets the number related to the button*/
     QString butValue = button -> text();
 
-    // Value is the display is acquired
+    /*!
+     * \brief displayValue
+     */
+    /*Value is the display is acquired*/
     QString displayValue = ui -> Display -> text();
 
     if((displayValue.toDouble() == 0) || (displayValue.toDouble() == 0.0))
@@ -112,23 +130,31 @@ void Calculator::NumberPressed()
     }
     else
     {
-        // The new number is allocated to the right side of the existing number
+        /*!
+         * \brief newVal
+         */
+        /*The new number is allocated to the right side of the existing number*/
         QString newVal = displayValue + butValue;
 
-        // The double value of the number is taken
+        /*!
+         * \brief dblNewVal
+         */
+        /*The double value of the number is taken*/
         double dblNewVal = newVal.toDouble();
 
-        // Up to 16 numbers are allowed to be displayed
-        // Before using the exponents
+         /*Up to 16 numbers are allowed to be displayed
+         Before using the exponents*/
         ui -> Display -> setText(QString::number(dblNewVal, 'g', 16));
     }
 }
 
 
-
+/*!
+ * \brief Calculator::MathButtonPressed
+ */
 void Calculator::MathButtonPressed()
 {
-    // Cancel the previous math buttons that were clicked
+     /*Cancel the previous math buttons that were clicked*/
     addTrigger = false;
     subtractionTrigger = false;
     divideTrigger = false;
@@ -137,14 +163,24 @@ void Calculator::MathButtonPressed()
     squareTrigger = false;
     cubeTrigger = false;
 
-    // Store the current value in the Display
+    /*!
+     * \brief displayVal
+     */
+    /*Store the current value in the Display*/
     QString displayVal = ui -> Display -> text();
+
     calValue = displayVal.toDouble();
 
-    // A pointer is returned to the button that was clicked
+    /*!
+     * \brief button
+     */
+    /*A pointer is returned to the button that was clicked*/
     QPushButton *button = (QPushButton *)sender();
 
-    // Math symbol is acquired
+    /*!
+     * \brief butValue
+     */
+    /*Math symbol is acquired*/
     QString butValue = button->text();
 
 
@@ -177,22 +213,34 @@ void Calculator::MathButtonPressed()
         cubeTrigger = true;
     }
 
-    // Clear the display
+     /*Clear the display*/
     ui -> Display -> setText("");
 }
 
 
-
+/*!
+ * \brief Calculator::EqualButtonPressed
+ */
 void Calculator::EqualButtonPressed()
 {
-    // Holds the new calculation
+    /*!
+     * \brief solution
+     */
+    /*Holds the new calculation*/
     double solution = 0.0;
 
-    // Get the value in the display
+    /*!
+     * \brief displayValue
+     */
+    /*Get the value in the display*/
     QString displayValue = ui -> Display -> text();
+
+    /*!
+     * \brief dblDisplayValue
+     */
     double dblDisplayValue = displayValue.toDouble();
 
-    // Makes sure that the math button is pressed
+     /*Makes sure that the math button is pressed*/
     if(addTrigger || subtractionTrigger || divideTrigger || multiTrigger || percentageTrigger || squareTrigger || cubeTrigger )
     {
         if(addTrigger)
@@ -225,41 +273,57 @@ void Calculator::EqualButtonPressed()
         }
     }
 
-    // Solution is displayed
+     /*Solution is displayed*/
     ui -> Display -> setText(QString::number(solution));
 
 }
 
 
-
+/*!
+ * \brief Calculator::ChangeNumberSign
+ */
 void Calculator::ChangeNumberSign()
 {
-    // Gets the value that is in the display
+    /*!
+     * \brief displayValue
+     */
+    /*Gets the value that is in the display*/
     QString displayValue = ui -> Display -> text();
 
-    // Checks whether the number is positive
+     /*Checks whether the number is positive*/
     QRegularExpression reg("[-+]?[0-9.]*");
 
-    // The sign is changed if it is a number
+     /*The sign is changed if it is a number*/
     if(reg.match(displayValue).hasMatch())
     {
+        /*!
+         * \brief dblDisplayValue
+         */
         double dblDisplayValue = displayValue.toDouble();
+
+        /*!
+         * \brief dblDisplayValueSign
+         */
         double dblDisplayValueSign = -1 * dblDisplayValue;
 
-        // The solution is displayed
+         /*The solution is displayed*/
         ui -> Display -> setText(QString::number(dblDisplayValueSign));
     }
 }
 
 
-
+/*!
+ * \brief Calculator::on_ButtonDecimalPoint_released
+ */
 void Calculator::on_ButtonDecimalPoint_released()
 {
     ui -> Display -> setText(ui -> Display -> text() + ".");
 }
 
 
-
+/*!
+ * \brief Calculator::ClearButtonPressed
+ */
 void Calculator::ClearButtonPressed()
 {
     ui -> Display -> setText("0");
